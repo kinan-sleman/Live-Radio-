@@ -79,6 +79,9 @@ try{
             }else{
                 this.counter = this.radio_Source.length - 1;
             }
+            if(this.audio.networkState == 3){
+                alert("Error_INTERNET_DISCONNECTED \n please check your internet connection and reload page");
+            }
             localStorage.setItem("position",this.counter);
             this.audio_Event();
             this.keep_play();
@@ -89,6 +92,9 @@ try{
                 this.counter++;
             }else{
                 this.counter = 0;
+            }
+            if(this.audio.networkState == 3){
+                alert("Error_INTERNET_DISCONNECTED \n please check your internet connection and reload this page");
             }
             localStorage.setItem("position",this.counter);
             this.audio_Event();
