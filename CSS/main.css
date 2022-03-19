@@ -79,6 +79,7 @@ body{
     left: 93%;
     font-size: 17px;
     font-weight: bolder;
+    cursor: pointer;
 }
 #ranges{
     text-align:center;
