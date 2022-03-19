@@ -65,6 +65,7 @@ try{
             }else{
                 this.play_pause_button.setAttribute("src","../img/play.png");
                 this.audio.pause();
+                this.Hide_pleaseWait();
             }
             if(this.audio.networkState == 3){
                 alert("Error_INTERNET_DISCONNECTED \n please check your internet connection and reload page");
