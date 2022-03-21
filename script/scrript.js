@@ -67,9 +67,6 @@ try{
                 this.audio.pause();
                 this.Hide_pleaseWait();
             }
-            // if(this.audio.networkState == 3){
-            //     alert("Error_INTERNET_DISCONNECTED \n please check your internet connection and reload page");
-            // }
             this.audio_Event();
         }
         back_music(){
@@ -93,9 +90,6 @@ try{
             }else{
                 this.counter = 0;
             }
-            // if(this.audio.networkState == 3){
-            //     alert("Error_INTERNET_DISCONNECTED \n please wait for loading radio station \n Or check your internet connection and reload this page");
-            // }
             localStorage.setItem("position",this.counter);
             this.audio_Event();
             this.keep_play();
