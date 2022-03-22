@@ -34,12 +34,21 @@ body{
     font-style: italic;
 }
 #main header marquee{
+    -webkit-font-size: 35px;
+    -moz-font-size: 35px;
+    -o-font-size: 35px;
     font-size: 35px;
     border-top:6px double #fff;
     border-bottom:6px double #FFF;
     background-color: #6418185e;
     height: 71px;
+    -webkit-line-height: 71px;
+    -moz-font-size: 35px;
+    -o-line-height: 71px;
     line-height: 71px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -o-border-radius: 20px;
     border-radius: 20px;
     animation-name:ChangeColor;
     animation-duration:10s;
