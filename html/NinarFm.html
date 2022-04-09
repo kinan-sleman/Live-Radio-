@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninar FM</title>
+    <!-- SEO -->
+    <meta name="describtion" content="راديو مباشر لجميع المحطات السورية"/>
+    <meta name="author" content="kinan sleman"/>
+    <meta name="keywords" content="audio , player , music , radio , arab radio"/>
+    <meta property="og:title" content="Live Radio"/>
+    <meta property="og:describtion" content="راديو مباشر لجميع المحطات السورية"/>
+    <meta property="og:image" content="../img/image.jpg"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Live Radio"/>
+    <meta name="twitter:describtion" content="راديو مباشر لجميع المحطات السورية"/>
+    <meta name="twitter:image" content="../img/image.jpg"/>
+    <meta name="twitter:site" content="@kinan_sleman"/>
+    <meta name="twitter:creator" content="@kinan_sleman"/>
+    <!-- theme-color -->
+    <meta name="theme-color" content="#f00"/>
+    <!-- ICON -->
+    <link rel="icon" href="../img/5.jfif"/> 
+    <link rel="shortcut" href="../img/5.jfif"/> 
+    <link rel="apple-touch-icon" href="../img/5.jfif"/> 
+    <!-- CSS File -->
+    <link rel="stylesheet" href="../CSS/main.css"/>
+</head>
+<body id="body">
+    <main id="main">
+        <div class="dropdown">
+            <button class="dropbtn">Select Station - اختر محطة</button>
+            <div id="myDropdown" class="dropdown-content">
+              <a href="sawtAlshabab.html">Sawt AlShabab</a>
+              <a href="Souryana.html">Souryana</a>
+              <a href="ShamFM.html">Sham FM</a>
+              <a href="NinarFm.html">Ninar FM</a>
+              <a href="AlmadinaFM.html">Almadina FM</a>
+              <a href="ArabsesqueFM.html">Arabesque FM</a>
+              <a href="FarahFM.html">Farah FM</a>
+              <a href="FuseFM.html">Fuse FM</a>
+              <a href="RozanaFM.html">Rozana FM</a>
+              <a href="NojoomFM.html">Nojoom FM</a>
+              <a href="DamascusFM.html">Damascus FM 88.7</a>
+
+            </div>
+        </div>
+        <header>
+            <img id="img" src="../img/5.jfif" alt="">
+            <h2>Live Radio</h2>
+            <marquee behavior="scroll" direction="left" scrollamount="15" id="radio_title">Ninar FM, 88.3 FM, Halab, Syria</marquee>
+        </header>
+        <div id="content">
+            <div id="buttons">
+                <!-- <img src="../img/previous.png" id="back_button" alt=""> -->
+                <img src="../img/play.png" id="play_pause_button" alt="">
+                <!-- <img src="../img/next.png" id="next_button" alt="">    -->
+                <audio id="audio" src="http://ninarfm.grtvstream.com:8896/;stream.mp3?listening-from-radio-garden=1649409665"></audio> <span id="pleaseWait">please wait .. or try another station<span id="X">&times;</span> </span>
+            </div>
+            <article id="ranges">
+                <h3>volume - الصوت</h3>
+                <input type="range" id="volumeRange">
+                <h3>speed - السرعة</h3>
+                <input type="range"max="200" min="10" id="RateRange">
+            </article>
+            <article id="colors">
+                <div id="color1"></div>
+                <div id="color2"></div>
+                <div id="color3"></div>
+                <div id="color4"></div>
+                <div id="color5"></div>
+                <div id="color6"></div>
+            </article>
+            
+        </div>
+      
+    </main>
+    <footer id="footer">&copy; Copyright: kinan-sleman 2022 </footer>
+    <script src="../script/scrript.js"></script>
+    <script src="../script/Volume.js"></script>
+    <script src="../script/colors.js"></script>
+    <script src="../script/Error_message.js"></script>
+</body>
+</html> 
