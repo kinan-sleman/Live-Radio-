@@ -9,11 +9,12 @@
 body{
     background-repeat: no-repeat;
 }
+
 /* Dropdown Button */
 .dropbtn {
     background-color: #3498DB;
     color: white;
-    padding: 7px;
+    padding: 16px;
     font-size: 22px;
     border: none;
     cursor: pointer;
