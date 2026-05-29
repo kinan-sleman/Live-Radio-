@@ -1,86 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Radio</title>
-    <!-- SEO -->
-    <meta name="description" content="راديو مباشر لجميع المحطات السورية"/>
-    <meta name="author" content="kinan sleman"/>
-    <meta name="keywords" content="audio , player , music , radio , arab radio"/>
-    <meta property="og:title" content="Live Radio"/>
-    <meta property="og:description" content="راديو مباشر لجميع المحطات السورية"/>
-    <meta property="og:image" content="https://public-rf-upload.minhawebradio.net/144803/cover/b44194982b5de384109996288f4a87d1.jpg"/>
-    <!-- <meta property="og:image:width" content="1200"/> -->
-    <!-- <meta property="og:image:height" content="630"/> -->
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Live Radio"/>
-    <meta name="twitter:description" content="راديو مباشر لجميع المحطات السورية"/>
-    <meta name="twitter:image" content="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwallpaperstock.net%2Fanalog-radio-macro-wallpapers_w42767.html&psig=AOvVaw0TXhc768JhBptHGVRwqR6X&ust=1650679637783000&source=images&cd=vfe&ved=2ahUKEwjGpe38yqb3AhWKSkEAHX1oBPUQjRx6BAgAEAs"/>
-    <meta name="twitter:site" content="@kinan_sleman"/>
-    <meta name="twitter:creator" content="@kinan_sleman"/>
-    <!-- theme-color -->
-    <meta name="theme-color" content="#f00"/>
-    <!-- ICON -->
-    <link rel="icon" href="../img/5.jfif"/> 
-    <link rel="shortcut" href="../img/5.jfif"/> 
-    <link rel="apple-touch-icon" href="../img/5.jfif"/> 
-    <!-- CSS File -->
-    <link rel="stylesheet" href="../CSS/main.css"/>
+    <title>GEO-STREAM v3.0 | Global Geo-Radio Engine</title>
+    <meta name="title" content="GEO-STREAM v3.0 | Global Geo-Radio Engine">
+    <meta name="description"
+        content="Explore and stream live radio stations globally through an interactive dark-mode map interface. Listen to real-time audio broadcasts instantly.">
+    <meta name="keywords"
+        content="geo-stream, live radio, global radio, radio map, spatial audio, streaming engine, web radio, internet radio">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="author" content="GLMA Agency">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kinan-sleman.github.io/Live-Radio-/">
+    <meta property="og:title" content="GEO-STREAM v3.0 | Global Geo-Radio Engine">
+    <meta property="og:description"
+        content="Explore and stream live radio stations globally through an interactive dark-mode map interface. Listen to real-time audio broadcasts instantly.">
+    <meta property="og:image" content="https://kinan-sleman.github.io/Live-Radio-/img/meta-image.svg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kinan-sleman.github.io/Live-Radio-/">
+    <meta property="twitter:title" content="GEO-STREAM v3.0 | Global Geo-Radio Engine">
+    <meta property="twitter:description"
+        content="Explore and stream live radio stations globally through an interactive dark-mode map interface. Listen to real-time audio broadcasts instantly.">
+    <meta property="twitter:image" content="https://kinan-sleman.github.io/Live-Radio-/img/meta-image.svg">
+
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="../CSS/main.css" />
 </head>
-<body id="body">
-    <main id="main">
-        <div id="selectDiv">
-            <div class="dropdown">
-                <button class="dropbtn">Select Station - اختر محطة</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a href="#">Sawt AlShabab</a>
-                    <a href="#">Sham FM</a>
-                    <a href="#">Ninar FM</a>
-                    <a href="#">Almadina FM</a>
-                    <a href="#">Arabesque FM</a>
-                    <a href="#">Farah FM</a>
-                    <a href="#">Fuse FM</a>
-                    <a href="#">Nojoom FM</a>
-                    <a href="#">Rozana FM</a>
+
+<body>
+
+    <div id="map"></div>
+
+    <main class="floating-console">
+        <header class="console-header">
+            <div class="brand">
+                <span class="pulse-indicator"></span>
+                <h2>GEO-STREAM v3.0</h2>
+            </div>
+            <div class="status-badge" id="engineStatus">READY</div>
+        </header>
+
+        <div class="target-country-bar">
+            <span class="label">REGION:</span>
+            <span id="targetCountry" class="value">Select Marker</span>
+        </div>
+
+        <section class="stations-view">
+            <div class="view-header">
+                <h3>STATIONS</h3>
+                <span id="stationCount" class="counter-badge">0</span>
+            </div>
+            <div id="stationsList" class="stations-list-container">
+                <div class="empty-state">Click any country marker on the map to query the global database.</div>
+            </div>
+        </section>
+
+        <footer id="dynamicPlayer" class="console-player hidden">
+            <div class="track-info">
+                <div class="scrolling-text-container">
+                    <div id="currentStationName" class="scrolling-text">IDLE</div>
                 </div>
             </div>
-        <header>
-            
-            <img id="img" src="../img/5.jfif" alt="">
-            <h2>Live Radio</h2>
-            <marquee behavior="scroll" direction="left" scrollamount="15" id="radio_title">
-                Sham FM, 92.3 FM, Dimashq, Syria
-            </marquee>
-        </header>
-        <div id="content">
-            <div id="buttons">
-                <img src="../img/play.png" id="play_pause_button" alt="">
-                <audio id="audio" src="https://radioshamfm.grtvstream.com:8400/stream?listening-from-radio-garden=1649411103"></audio> <span id="pleaseWait">please wait .. or try another station<span id="X">&times;</span> </span>
+
+            <div class="player-core-row">
+                <button id="playBtn" class="action-btn" aria-label="Playback Control">
+                    <svg class="icon icon-play" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M8 5.143c0-.915 1.01-1.47 1.783-.981l8.672 5.475c.72.455.72 1.506 0 1.961l-8.672 5.476C9.01 17.564 8 17.01 8 16.094V5.143z" />
+                    </svg>
+                    <svg class="icon icon-pause" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                    <svg class="icon icon-loading spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="3">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" />
+                        <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                </button>
+
+                <div class="mixer-controls">
+                    <div class="mixer-group">
+                        <label for="volumeRange">VOL</label>
+                        <input type="range" id="volumeRange" min="0" max="100" value="80" class="console-slider">
+                    </div>
+                </div>
             </div>
-            <article id="ranges">
-                <h3 id="volumeLabel">volume - الصوت</h3>
-                <input type="range" id="volumeRange">
-                <h3 id="SpeedLabel"><span id="speedLabel">speed - السرعة</span> <img id="resetButton" src="../img/reset.png" alt=""></h3>
-                <input type="range"max="200" min="10" id="RateRange">
-            </article>
-            <article id="colors">
-                <div id="color1"></div>
-                <div id="color2"></div>
-                <div id="color3"></div>
-                <div id="color4"></div>
-                <div id="color5"></div>
-                <div id="color6"></div>
-            </article>
-            
-        </div>
-      
+        </footer>
     </main>
-    <footer id="footer">&copy; Copyright: kinan-sleman 2022 </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <audio id="globalAudio"></audio>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
     <script src="../script/scrript.js"></script>
-    <script src="../script/Volume.js"></script>
-    <script src="../script/colors.js"></script>
-    <script src="../script/Error_message.js"></script>
 </body>
-</html> 
+
+</html>
