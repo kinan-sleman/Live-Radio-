@@ -60,7 +60,7 @@ body {
   .floating-console {
     top: auto;
     right: 12px;
-    bottom: 12px;
+    bottom: 44px;
     left: 12px;
     width: auto;
     max-height: 50vh;
