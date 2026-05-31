@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GEO-STREAM v3.0 | Global Geo-Radio Engine</title>
+
     <meta name="title" content="GEO-STREAM v3.0 | Global Geo-Radio Engine">
     <meta name="description"
         content="Explore and stream live radio stations globally through an interactive dark-mode map interface. Listen to real-time audio broadcasts instantly.">
@@ -29,6 +30,7 @@
     <meta property="twitter:image" content="https://kinan-sleman.github.io/Live-Radio-/img/meta-image.png">
 
     <meta name="theme-color" content="#0d1117">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -37,6 +39,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
     <link rel="stylesheet" href="../CSS/main.css" />
 </head>
 
@@ -50,6 +53,7 @@
                 <span class="pulse-indicator"></span>
                 <h2>GEO-STREAM v3.0</h2>
             </div>
+
             <div class="status-badge" id="engineStatus">READY</div>
         </header>
 
@@ -61,8 +65,14 @@
         <section class="stations-view">
             <div class="view-header">
                 <h3>STATIONS</h3>
-                <span id="stationCount" class="counter-badge">0</span>
+
+                <div class="view-actions">
+                    <button id="allStationsBtn" class="view-tab active" type="button">ALL</button>
+                    <button id="favoritesBtn" class="view-tab" type="button">FAV</button>
+                    <span id="stationCount" class="counter-badge">0</span>
+                </div>
             </div>
+
             <div id="stationsList" class="stations-list-container">
                 <div class="empty-state">Click any country marker on the map to query the global database.</div>
             </div>
@@ -76,17 +86,21 @@
             </div>
 
             <div class="player-core-row">
-                <button id="playBtn" class="action-btn" aria-label="Playback Control">
+                <button id="playBtn" class="action-btn" aria-label="Playback Control" type="button">
                     <svg class="icon icon-play" viewBox="0 0 24 24" fill="currentColor">
                         <path
                             d="M8 5.143c0-.915 1.01-1.47 1.783-.981l8.672 5.475c.72.455.72 1.506 0 1.961l-8.672 5.476C9.01 17.564 8 17.01 8 16.094V5.143z" />
                     </svg>
+
                     <svg class="icon icon-pause" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+
                     <svg class="icon icon-loading spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="3">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" />
-                        <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
                 </button>
 
                 <div class="mixer-controls">
@@ -107,10 +121,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <script src="../script/scrript.js"></script>
+    <script src="../script/script.js"></script>
 </body>
 
 </html>

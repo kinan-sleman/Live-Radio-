@@ -11,9 +11,17 @@ class GeoRadioEngine {
         this.dynamicPlayer = document.getElementById('dynamicPlayer');
         this.toastContainer = document.getElementById('toastContainer');
 
+        this.allStationsBtn = document.getElementById('allStationsBtn');
+        this.favoritesBtn = document.getElementById('favoritesBtn');
+
         this.map = null;
         this.markerClusterGroup = null;
         this.currentActiveUrl = '';
+
+        this.storageKey = 'geoStreamFavorites';
+        this.favorites = this.getFavorites();
+        this.lastStations = [];
+        this.currentView = 'all';
 
         this.geoMarkers = [
             { name: 'Syria', code: 'SY', lat: 34.8021, lng: 38.9968 },
@@ -93,6 +101,7 @@ class GeoRadioEngine {
         this.syncInitialVolume();
         this.hookAudioEvents();
         this.hookControls();
+        this.updateTabsCount();
     }
 
     syncInitialVolume() {
@@ -123,10 +132,13 @@ class GeoRadioEngine {
 
             this.geoMarkers.forEach(loc => {
                 const marker = L.marker([loc.lat, loc.lng]);
+
                 marker.on('click', () => {
+                    this.switchToAllView(false);
                     this.map.setView([loc.lat, loc.lng], 5, { animate: true, duration: 0.8 });
                     this.fetchLiveStationsByCountry(loc.code, loc.name);
                 });
+
                 this.markerClusterGroup.addLayer(marker);
             });
 
@@ -134,7 +146,9 @@ class GeoRadioEngine {
         } else {
             this.geoMarkers.forEach(loc => {
                 const marker = L.marker([loc.lat, loc.lng]).addTo(this.map);
+
                 marker.on('click', () => {
+                    this.switchToAllView(false);
                     this.map.setView([loc.lat, loc.lng], 5, { animate: true, duration: 0.8 });
                     this.fetchLiveStationsByCountry(loc.code, loc.name);
                 });
@@ -145,14 +159,21 @@ class GeoRadioEngine {
     async fetchLiveStationsByCountry(countryCode, countryName) {
         this.setEngineStatus('QUERYING', 'loading');
         this.targetCountry.innerText = countryName.toUpperCase();
-        this.stationsList.innerHTML = `<div class="empty-state">Polling global nodes for ${countryName}...</div>`;
+        this.stationsList.innerHTML = `<div class="empty-state">Polling global nodes for ${this.escapeHTML(countryName)}...</div>`;
 
         try {
             const apiEndpoint = `https://de1.api.radio-browser.info/json/stations/bycountrycodeexact/${countryCode}?limit=30&order=votes&reverse=true&hidebroken=true&has_m3u8=false`;
             const response = await fetch(apiEndpoint);
-            const data = await response.json();
 
-            this.renderStations(data);
+            if (!response.ok) {
+                throw new Error('Radio API request failed.');
+            }
+
+            const data = await response.json();
+            const cleanStations = this.normalizeStations(data, countryName);
+
+            this.lastStations = cleanStations;
+            this.renderStations(cleanStations);
             this.showToast(`Fetched active channels for ${countryName}.`);
         } catch (error) {
             this.stationsList.innerHTML = `<div class="empty-state" style="color:#ff3b30;">API handshaking refused.</div>`;
@@ -161,44 +182,161 @@ class GeoRadioEngine {
         }
     }
 
-    renderStations(stations) {
-        this.stationsList.innerHTML = '';
-        this.stationCount.innerText = stations.length;
+    normalizeStations(stations, fallbackCountry = '') {
+        if (!Array.isArray(stations)) {
+            return [];
+        }
 
-        if (!stations || stations.length === 0) {
-            this.stationsList.innerHTML = `<div class="empty-state">No broadcast nodes available.</div>`;
-            this.setEngineStatus('EMPTY', 'idle');
+        return stations
+            .filter(station => station && station.url_resolved && station.name)
+            .map(station => ({
+                name: station.name || 'Unknown Station',
+                url_resolved: station.url_resolved,
+                bitrate: station.bitrate || 0,
+                tags: station.tags || '',
+                country: station.country || fallbackCountry || '',
+                favicon: station.favicon || ''
+            }));
+    }
+
+    getFavorites() {
+        try {
+            const savedFavorites = JSON.parse(localStorage.getItem(this.storageKey));
+            return Array.isArray(savedFavorites) ? savedFavorites : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    saveFavorites() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.favorites));
+        this.updateTabsCount();
+    }
+
+    isFavorite(stationUrl) {
+        return this.favorites.some(item => item.url_resolved === stationUrl);
+    }
+
+    toggleFavorite(station) {
+        if (!station || !station.url_resolved) {
             return;
         }
 
-        stations.forEach(station => {
+        const exists = this.isFavorite(station.url_resolved);
+
+        if (exists) {
+            this.favorites = this.favorites.filter(item => item.url_resolved !== station.url_resolved);
+            this.showToast('Removed from favorites.');
+        } else {
+            this.favorites.unshift({
+                name: station.name,
+                url_resolved: station.url_resolved,
+                bitrate: station.bitrate || 0,
+                tags: station.tags || '',
+                country: station.country || this.targetCountry.innerText || '',
+                favicon: station.favicon || '',
+                savedAt: new Date().toISOString()
+            });
+
+            this.showToast('Added to favorites.');
+        }
+
+        this.saveFavorites();
+
+        if (this.currentView === 'favorites') {
+            this.renderStations(this.favorites);
+        } else {
+            this.renderStations(this.lastStations);
+        }
+    }
+
+    switchToAllView(shouldRender = true) {
+        this.currentView = 'all';
+        this.allStationsBtn.classList.add('active');
+        this.favoritesBtn.classList.remove('active');
+
+        if (shouldRender) {
+            this.renderStations(this.lastStations);
+        }
+    }
+
+    switchToFavoritesView() {
+        this.currentView = 'favorites';
+        this.favoritesBtn.classList.add('active');
+        this.allStationsBtn.classList.remove('active');
+        this.targetCountry.innerText = 'FAVORITES';
+        this.renderStations(this.favorites);
+    }
+
+    updateTabsCount() {
+        if (this.favoritesBtn) {
+            this.favoritesBtn.innerText = `FAV ${this.favorites.length}`;
+        }
+    }
+
+    renderStations(stations) {
+        const safeStations = Array.isArray(stations) ? stations : [];
+
+        this.stationsList.innerHTML = '';
+        this.stationCount.innerText = safeStations.length;
+        this.updateTabsCount();
+
+        if (safeStations.length === 0) {
+            const emptyMessage = this.currentView === 'favorites'
+                ? 'No favorite stations yet. Add stations using the star button.'
+                : 'No broadcast nodes available.';
+
+            this.stationsList.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
+            this.setEngineStatus(this.currentView === 'favorites' ? 'FAVORITES' : 'EMPTY', 'idle');
+            return;
+        }
+
+        safeStations.forEach(station => {
             const row = document.createElement('button');
             row.className = 'api-station-row';
+            row.type = 'button';
+
             if (this.currentActiveUrl === station.url_resolved && !this.audio.paused) {
                 row.classList.add('active-playing');
             }
 
             const bitrate = station.bitrate && station.bitrate !== 0 ? `${station.bitrate}k` : 'VBR';
-            const tags = station.tags ? station.tags.split(',')[0] : 'LIVE';
+            const tags = station.tags ? station.tags.split(',')[0].trim() : 'LIVE';
+            const favoriteActive = this.isFavorite(station.url_resolved) ? 'is-favorite' : '';
+            const favoriteIcon = favoriteActive ? '★' : '☆';
+            const stationName = station.name ? station.name.trim() : 'Unknown Station';
 
             row.innerHTML = `
                 <div class="station-info-left">
-                    <span class="station-name-text">${station.name.trim()}</span>
-                    <span class="station-tags-text">#${tags.toUpperCase()}</span>
+                    <span class="station-name-text">${this.escapeHTML(stationName)}</span>
+                    <span class="station-tags-text">#${this.escapeHTML(tags.toUpperCase())}</span>
                 </div>
-                <div class="station-bitrate">${bitrate}</div>
+
+                <div class="station-actions">
+                    <button class="favorite-btn ${favoriteActive}" type="button" aria-label="Add to favorites" title="Add to favorites">
+                        ${favoriteIcon}
+                    </button>
+                    <div class="station-bitrate">${this.escapeHTML(bitrate)}</div>
+                </div>
             `;
 
+            const favBtn = row.querySelector('.favorite-btn');
+
+            favBtn.addEventListener('click', event => {
+                event.stopPropagation();
+                this.toggleFavorite(station);
+            });
+
             row.addEventListener('click', () => {
-                document.querySelectorAll('.api-station-row').forEach(r => r.classList.remove('active-playing'));
+                document.querySelectorAll('.api-station-row').forEach(item => item.classList.remove('active-playing'));
                 row.classList.add('active-playing');
-                this.loadAndPlayStream(station.url_resolved, station.name);
+                this.loadAndPlayStream(station.url_resolved, stationName);
             });
 
             this.stationsList.appendChild(row);
         });
 
-        this.setEngineStatus('ONLINE', 'idle');
+        this.setEngineStatus(this.currentView === 'favorites' ? 'FAVORITES' : 'ONLINE', 'idle');
     }
 
     loadAndPlayStream(streamUrl, stationName) {
@@ -211,13 +349,13 @@ class GeoRadioEngine {
         const currentVol = this.volumeRange.value;
 
         this.audio.src = streamUrl;
-        
         this.audio.volume = currentVol / 100;
         this.volumeRange.value = currentVol;
 
         this.audio.play().catch(() => {
             this.setEngineStatus('BLOCKED', 'idle');
             this.playBtn.classList.remove('playing', 'loading');
+            this.showToast('Autoplay blocked. Press play manually.', true);
         });
     }
 
@@ -235,6 +373,21 @@ class GeoRadioEngine {
         this.volumeRange.addEventListener('input', () => {
             this.audio.volume = this.volumeRange.value / 100;
         });
+
+        this.allStationsBtn.addEventListener('click', () => {
+            this.switchToAllView(true);
+
+            if (this.lastStations.length === 0) {
+                this.targetCountry.innerText = 'Select Marker';
+                this.stationsList.innerHTML = `<div class="empty-state">Click any country marker on the map to query the global database.</div>`;
+                this.stationCount.innerText = 0;
+                this.setEngineStatus('READY', 'idle');
+            }
+        });
+
+        this.favoritesBtn.addEventListener('click', () => {
+            this.switchToFavoritesView();
+        });
     }
 
     hookAudioEvents() {
@@ -248,6 +401,10 @@ class GeoRadioEngine {
             this.playBtn.classList.add('loading');
         });
 
+        this.audio.addEventListener('pause', () => {
+            this.playBtn.classList.remove('playing', 'loading');
+        });
+
         this.audio.addEventListener('error', () => {
             this.playBtn.classList.remove('playing', 'loading');
             this.setEngineStatus('LINK BROKEN', 'idle');
@@ -257,10 +414,12 @@ class GeoRadioEngine {
 
     setEngineStatus(text, state = 'idle') {
         this.engineStatus.innerText = text;
+
         if (state === 'loading') {
             this.playBtn.classList.add('loading');
             this.engineStatus.style.color = '#00bfff';
         } else {
+            this.playBtn.classList.remove('loading');
             this.engineStatus.style.color = '#00ffaa';
         }
     }
@@ -276,6 +435,15 @@ class GeoRadioEngine {
             toast.style.animation = 'toastIn 0.3s ease reverse forwards';
             setTimeout(() => toast.remove(), 300);
         }, 3500);
+    }
+
+    escapeHTML(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 }
 
